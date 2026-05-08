@@ -19,8 +19,8 @@ public class Player : MonoBehaviour
     {
         transform.Translate(InputSystem.actions["Move"].ReadValue<Vector2>().x * speed * Time.deltaTime, 0, InputSystem.actions["Move"].ReadValue<Vector2>().y * speed * Time.deltaTime);
 
-        verticalSpeed -= gravity * Time.deltaTime;
-        verticalSpeed = Mathf.Clamp(verticalSpeed, -10, 0);
-        transform.Translate(0, verticalSpeed * Time.deltaTime, 0);
+        //verticalSpeed -= gravity * Time.deltaTime;
+        //verticalSpeed = Mathf.Clamp(verticalSpeed, -10, 0);
+        //transform.Translate(0, verticalSpeed * Time.deltaTime, 0);
     }
 }

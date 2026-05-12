@@ -7,7 +7,8 @@ using UnityEngine.InputSystem;
 public class Player : MonoBehaviour
 {
     public int speed = 3;
-    float gravity = 7f;
+    float gravity = 17f;
+    float jumpForce = 8;
     float verticalSpeed = 0;
 
     CharacterController controller;
@@ -17,9 +18,13 @@ public class Player : MonoBehaviour
 
     string verticalStateMachine;
 
+
+    Vector2 input;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        input = new Vector2(0,0);
         controller = GetComponent<CharacterController>();
         verticalStateMachine = "onGround";
     }
@@ -30,7 +35,23 @@ public class Player : MonoBehaviour
     {
         //Movimiento
 
-        Vector2 input = InputSystem.actions["Move"].ReadValue<Vector2>();
+        Vector2 rawInput = InputSystem.actions["Move"].ReadValue<Vector2>();
+        float frenado;
+        if (rawInput == new Vector2(0,0))
+            frenado = 1f;
+        else
+            frenado = 3f;
+        
+        if (!controller.isGrounded)
+        {
+            input = Vector2.MoveTowards(input,rawInput,frenado * Time.deltaTime);
+        }
+        else
+        {
+            input = rawInput;
+        }
+
+
         Vector3 forward_dir = cam.transform.forward;
         forward_dir.Normalize();
         Vector3 right_dir = cam.transform.right;
@@ -48,7 +69,7 @@ public class Player : MonoBehaviour
 
         if (InputSystem.actions["jump"].WasPressedThisFrame() && verticalStateMachine == "onGround")
         {
-            verticalSpeed = 5;
+            verticalSpeed = jumpForce;
         }
 
 

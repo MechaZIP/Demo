@@ -1,10 +1,11 @@
+using System.Diagnostics;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 // taltalyal
 public class Player : MonoBehaviour
 {
-    public int speed = 5;
+    public int speed = 15;
     float gravity = 3f;
     float verticalSpeed = 0;
 
@@ -14,28 +15,54 @@ public class Player : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        this.sprite.transform.localScale = new Vector3(10f, 10f, 10f);
+
     }
 
 
     // Update is called once per frame
     void Update()
     {
+        //Movimiento
+
         Vector2 input = InputSystem.actions["Move"].ReadValue<Vector2>();
-        Vector2 forward_dir = cam.transform.forward;
-        forward_dir.y = 0;
-        Vector2 right_dir = cam.transform.right;
-        right_dir.y = 0;
+        Vector3 forward_dir = cam.transform.forward;
+        forward_dir.Normalize();
+        Vector3 right_dir = cam.transform.right;
+        right_dir.Normalize();
 
+        Vector3 moveDirection = input.x * right_dir + input.y * forward_dir;
 
-        Vector2 moveDirection = input.x * right_dir + input.y * forward_dir;
 
         transform.Translate(moveDirection * Time.deltaTime * speed);
 
+        if (InputSystem.actions["jump"].WasPressedThisFrame())
+        {
+            //AddForce(9)
+        }
+       
+        //State Machine
+
+
+
+        //Rotación del sprite
+
+        sprite.transform.rotation = cam.transform.rotation;
+        Vector3 rot_provisional;
+        rot_provisional = sprite.transform.rotation.eulerAngles;
+        rot_provisional.x = 0;
+        sprite.transform.rotation = Quaternion.Euler(rot_provisional);
+
+        //Animaciones y espejos sprite
+
+        if (InputSystem.actions["Move"].ReadValue<Vector2>().x > 0)
+        {
+            sprite.GetComponent<SpriteRenderer>().flipX = true;
+        }
+        if (InputSystem.actions["Move"].ReadValue<Vector2>().x < 0)
+        {
+            sprite.GetComponent<SpriteRenderer>().flipX = false;
+        }
         
     
-        //verticalSpeed -= gravity * Time.deltaTime;
-        //verticalSpeed = Mathf.Clamp(verticalSpeed, -10, 0);
-        //transform.Translate(0, verticalSpeed * Time.deltaTime, 0);
     }
 }

@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.Diagnostics;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -5,17 +6,22 @@ using UnityEngine.InputSystem;
 // taltalyal
 public class Player : MonoBehaviour
 {
-    public int speed = 15;
-    float gravity = 3f;
+    public int speed = 3;
+    float gravity = 7f;
     float verticalSpeed = 0;
+
+    CharacterController controller;
 
     public GameObject sprite;
     public Camera cam;
 
+    string verticalStateMachine;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-
+        controller = GetComponent<CharacterController>();
+        verticalStateMachine = "onGround";
     }
 
 
@@ -30,21 +36,54 @@ public class Player : MonoBehaviour
         Vector3 right_dir = cam.transform.right;
         right_dir.Normalize();
 
-        Vector3 moveDirection = input.x * right_dir + input.y * forward_dir;
-
-
-        transform.Translate(moveDirection * Time.deltaTime * speed);
-
-        if (InputSystem.actions["jump"].WasPressedThisFrame())
+        if (verticalStateMachine == "onAir")
         {
-            //AddForce(9)
+            verticalSpeed -= gravity * Time.deltaTime;
         }
+        if (verticalStateMachine == "onGround")
+        {
+            verticalSpeed = -1; // por alguna razón la frenada que funciona no es esta, sino la que esta puesta en el state machine
+        }
+            
+
+        if (InputSystem.actions["jump"].WasPressedThisFrame() && verticalStateMachine == "onGround")
+        {
+            verticalSpeed = 5;
+        }
+
+
+        Vector3 direction = input.x * right_dir + input.y * forward_dir;
+        direction *= speed;
+        Vector3 moveDirection = new Vector3(direction.x,verticalSpeed,direction.z);
+
+        controller.Move(moveDirection * speed * Time.deltaTime);
        
+
+
         //State Machine
 
+        if (verticalStateMachine == "onGround" && controller.isGrounded == false)
+        {
+            verticalStateMachine = "leavingGround";
+        }
+        if (verticalStateMachine == "leavingGround" && controller.isGrounded == false)
+        {
+            verticalStateMachine = "onAir";
+        }
+        if (verticalStateMachine == "onAir" && controller.isGrounded == true)
+        {
+            verticalStateMachine = "landing";
+        }
+        if (verticalStateMachine == "landing" && controller.isGrounded == true)
+        {
+            verticalStateMachine = "onGround";
+        }
 
 
-        //Rotación del sprite
+        //Animaciones del sprite 
+
+
+        //Rotaciones del sprite
 
         sprite.transform.rotation = cam.transform.rotation;
         Vector3 rot_provisional;
@@ -52,7 +91,6 @@ public class Player : MonoBehaviour
         rot_provisional.x = 0;
         sprite.transform.rotation = Quaternion.Euler(rot_provisional);
 
-        //Animaciones y espejos sprite
 
         if (InputSystem.actions["Move"].ReadValue<Vector2>().x > 0)
         {

@@ -6,7 +6,7 @@ using UnityEngine.InputSystem;
 // taltalyal
 public class Player : MonoBehaviour
 {
-    public int speed = 3;
+    public int speed = 4;
     float gravity = 17f;
     float jumpForce = 8;
     float verticalSpeed = 0;

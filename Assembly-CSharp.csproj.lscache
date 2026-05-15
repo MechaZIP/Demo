@@ -51,10 +51,11 @@ TemporaryDependencyNodeTargetIdentifier=netstandard2.1
 
 [sourceFiles]
 Assets/Scripts/
+ areaController.cs
  camara3rdPersonPrueba.cs
+ cameraArea.cs
  InteractiveObject.cs
  Player.cs
-Assets/TutorialInfo/Scripts/Readme.cs
 Temp/obj/Assembly-CSharp/.NETStandard,Version=v2.1.AssemblyAttributes.cs
 
 [metadataReferences]

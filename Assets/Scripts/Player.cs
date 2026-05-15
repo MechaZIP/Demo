@@ -11,12 +11,13 @@ public class Player : MonoBehaviour
     float jumpForce = 8;
     float verticalSpeed = 0;
 
+    string verticalStateMachine;
+
     CharacterController controller;
 
     public GameObject sprite;
     public Camera cam;
 
-    string verticalStateMachine;
 
 
     Vector2 input;
